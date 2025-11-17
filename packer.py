@@ -22,6 +22,6 @@ else:
     print("Runfile not found or source directory doesn't exist.")
 if args.run:
     try:
-        subprocess.run(f"./runner.py {args.packname}.507ex", shell=True)
+        subprocess.run(f"python3 ./runner.py {args.packname}.507ex", shell=True)
     except KeyboardInterrupt:
         print("")

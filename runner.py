@@ -18,6 +18,8 @@ parser.add_argument('-v', '--verbose',
                     action='store_true')
 parser.add_argument('-k', '--keep-runtime',
                     action='store_true')
+parser.add_argument('-d', '--destroy', 
+                    action='store_true')
 parser.add_argument('sourcefile')
 
 args = parser.parse_args()
@@ -51,3 +53,5 @@ except Exception as e:
         print(e)
 if not args.keep_runtime:
     shutil.rmtree(".507ex-runtime")
+if args.destroy:
+    os.remove(args.sourcefile)

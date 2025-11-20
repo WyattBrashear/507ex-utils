@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#507 Labs .507ex Packer. 
+#507 Labs .507ex Packer.
 import shutil
 import argparse
 import os
@@ -23,6 +23,9 @@ else:
     print("Runfile not found or source directory doesn't exist.")
 if args.run:
     try:
-        subprocess.run(f"python3 ./runner.py {args.packname}.507ex", shell=True)
+        if args.temp:
+            subprocess.run(f"python3 {os.getcwd()}/runner.py -d {args.packname}.507ex", shell=True)
+        else:
+            subprocess.run(f"python3 {os.getcwd()}/runner.py {args.packname}.507ex", shell=True)
     except KeyboardInterrupt:
         print("")

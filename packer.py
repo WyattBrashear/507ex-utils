@@ -13,6 +13,7 @@ parser.add_argument('source')
 parser.add_argument('packname')
 parser.add_argument('-r', '--run',
                     action='store_true')
+parser.add_argument('-t', '--temp', action='store_true')
 args = parser.parse_args()
 if os.path.exists(f"{args.source}/runfile"):
     shutil.make_archive(f"{args.packname}", "zip", f"{args.source}")

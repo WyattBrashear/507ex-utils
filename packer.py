@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#507 Labs .507ex Packer. Cross-Platform Executables.
+#507 Labs .507ex Packer. 
 import shutil
 import argparse
 import os

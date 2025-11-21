@@ -76,7 +76,6 @@ except KeyboardInterrupt:
 
 except Exception as e:
     print(f"An Error occured while attempting to run {args.sourcefile}. Please contact the developer for assistance.")
-    print(e)
     os.chdir("../..")
     if args.verbose:
         print(e)

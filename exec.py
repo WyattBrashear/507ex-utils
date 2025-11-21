@@ -24,7 +24,7 @@ parser.add_argument('sourcefile')
 
 args = parser.parse_args()
 if args.verbose:
-    print(f"507 Labs EX Runner v 1.0.0. Running: {args.sourcefile}.")
+    print(f"507 Labs EX Runner v 1.2.0. Running: {args.sourcefile}.")
 try:
     shutil.copy(args.sourcefile, "./.507ex-runtime/exec.zip")
 except FileNotFoundError:

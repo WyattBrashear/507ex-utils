@@ -11,4 +11,4 @@ For security reasons, all files in an executable are hashed. This is done to pre
 All hashes are stored in the .hash directory that is created at build and included only in the executeable and does not exist in the source folder.
 It's format is {source file name}.hash and is in the sha256 format.
 
-**Note: This has had minimal testing so dont expect all executables to be package-able at the moment.**
+**Note: This has had minimal testing so don't expect all executables to be package-able at the moment.**

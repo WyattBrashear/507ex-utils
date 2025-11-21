@@ -10,3 +10,5 @@ The Runfile is a file that is required to be in any source directory that is bei
 For security reasons, all files in an executable are hashed. This is done to prevent unathorized tampering to the executable.
 All hashes are stored in the .hash directory that is created at build and included only in the executeable and does not exist in the source folder.
 It's format is {source file name}.hash and is in the sha256 format.
+
+**Note: This has had minimal testing so dont expect all executables to be package-able at the moment.**

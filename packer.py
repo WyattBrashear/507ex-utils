@@ -23,16 +23,22 @@ if os.path.exists(f"{args.source}/runfile"):
     os.mkdir(".hash")
     for file in sources:
         hash_func = hashlib.new('sha256')
-        with open(file, 'rb') as file:
-            while chunk := file.read(8192):
-                hash_func.update(chunk)
-        with open(f"./.hash/{str(file.name)}.hash", 'x') as f:
-            f.write(hash_func.hexdigest())
+        try:
+            with open(file, 'rb') as file:
+                while chunk := file.read(8192):
+                    hash_func.update(chunk)
+            with open(f"./.hash/{str(file.name)}.hash", 'x') as f:
+                f.write(hash_func.hexdigest())
+        except IsADirectoryError:
+            pass
+    print("Build checksums generated.")
     os.chdir("../")
+    print("Creating archive...")
     shutil.make_archive(f"{args.packname}", "zip", f"{args.source}")
+    print("Archive creation complete.")
     os.rename(f"{args.packname}.zip", f"{args.packname}.507ex")
     os.chdir(f"{args.source}")
-    shutil.rmtree(".hash")
+    shutil.rmtree("./.hash")
     os.chdir("../")
     print(f"Packed {args.packname}.507ex!")
 else:

@@ -14,4 +14,5 @@ args = parser.parse_args()
 shutil.copy(f"{args.source}", f"{args.output}.zip")
 with zipfile.ZipFile(f'{args.output}.zip', 'r') as zip_ref:
     zip_ref.extractall(f'./{args.output}')
+shutil.rmtree(f'./{args.output}/.hash')
 os.remove(f'{args.output}.zip')

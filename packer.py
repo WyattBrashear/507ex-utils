@@ -7,7 +7,7 @@ import subprocess
 import hashlib
 
 parser = argparse.ArgumentParser(
-                    prog='507 Labs EX Packer',
+                    prog='507 Labs EX Packaging Utility',
                     description='Packs a source directory into a .507ex executable.',
                     epilog='[/|\]')
 parser.add_argument('source')

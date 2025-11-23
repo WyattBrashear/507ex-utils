@@ -5,10 +5,7 @@ import shutil
 import subprocess
 import zipfile
 import hashlib
-import logging
-from datetime import datetime
 
-logging.basicConfig(level=logging.DEBUG, filename=f'/Users/wyattbrashear/Projects/507ex/.logs/exec-{datetime.now()}.log')
 parser = argparse.ArgumentParser(
                     prog='507 Labs EX Execution Utility',
                     description='Runs a .507ex executable.',
@@ -24,7 +21,6 @@ parser.add_argument('-i', '--infinite', action='store_true', help="Infinite mode
 parser.add_argument('sourcefile')
 
 args = parser.parse_args()
-logging.debug(f"Args: {args}")
 if not args.sourcefile.endswith(".507ex"):
     print("Source file must be a .507ex file.")
     exit(1)
@@ -60,7 +56,6 @@ try:
                     # Read the file in chunks of 8192 bytes
                     while chunk := f.read(8192):
                         hash_func.update(chunk)
-                logging.debug(f"Checksum for {file}: {hash_func.hexdigest()}")
                 file_hashes.append(hash_func.hexdigest())
             except IsADirectoryError:
                 pass
@@ -68,17 +63,14 @@ try:
     sources = os.listdir("./")
     sources.sort()
     for file in sources:
-        print("summing")
         try:
             with open(file, 'r') as f:
                 build_hashes.append(f.read())
-            logging.debug(f"Build Checksum from {file}: {f.read()}")
         except IsADirectoryError:
             pass
     if len(file_hashes) != len(build_hashes):
         raise Exception("There are a different number of files in the build version of the package than the runtime version. Possible tampering detected.")
     for i in range(len(file_hashes)):
-        logging.debug(f"Comparing {file_hashes[i]} to {build_hashes[i]}")
         if file_hashes[i] != build_hashes[i]:
             raise Exception("Checksums generated at build are not equivalent to the checksums generated at runtime. Possible tampering detected.")
     os.chdir("..")

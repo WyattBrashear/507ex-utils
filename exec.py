@@ -7,7 +7,7 @@ import zipfile
 import hashlib
 
 parser = argparse.ArgumentParser(
-                    prog='507 Labs EX Execution Utility',
+                    prog='507 Labs .507ex Execution Utility',
                     description='Runs a .507ex executable.',
                     epilog='[/|\]')
 

@@ -11,3 +11,5 @@ For security reasons, all core/top level files in an executable are hashed. This
 All hashes are stored in the .hash directory that is created at build and included only in the executeable and does not exist in the source folder.
 It's format is {source file name}.hash and is in the sha256 format.
 
+# CAR (Central App Repository)
+CAR is a server system that allows hosting of 507ex executables for easy download. it provides (Once uploaded) a url with the .507ex file on it.

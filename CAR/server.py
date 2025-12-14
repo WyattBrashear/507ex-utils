@@ -16,7 +16,7 @@ def upload_exec():
             os.mkdir(f"./static/507ex/{executable_id}")
             executable.save(f"./static/507ex/{executable_id}/{secure_filename(executable.filename)}")
             return {
-                "url": f"{request.url_root}/static/507ex/{executable_id}/{secure_filename(executable.filename)}"
+                "url": f"{request.url_root}static/507ex/{executable_id}/{secure_filename(executable.filename)}"
             }
         else:
             return {

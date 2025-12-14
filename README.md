@@ -9,7 +9,7 @@ The Runfile is a file that is required to be in any source directory that is bei
 ## Hashing
 For security reasons, all core/top level files in an executable are hashed. This is done to prevent unathorized tampering to the executable.
 All hashes are stored in the .hash directory that is created at build and included only in the executeable and does not exist in the source folder.
-It's format is {source file name}.hash and is in the sha256 format.
+It's format is {source file name}.hash and is in the blake2s format.
 
 # CAR (Central App Repository)
 CAR is a server system that allows hosting of 507ex executables for easy download. it provides (Once uploaded) a url with the .507ex file on it.

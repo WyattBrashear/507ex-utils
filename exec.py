@@ -88,7 +88,7 @@ try:
     sources_runtime = os.listdir("./")
     sources_runtime.sort()
     for file in sources_runtime:
-        hash_func = hashlib.new('blake')
+        hash_func = hashlib.new('blake2s')
         #Ensure files inside .hash is not hashed
         if file != ".hash":
             try:

@@ -44,7 +44,7 @@ if 'http://' in source or 'https://' in source:
         with open('remote.507ex', 'wb') as f:
             f.write(r.content)
     except:
-        pass
+        exit(1)
     source = "remote.507ex"
 
 #Check if the sourcefile is a .507ex file
@@ -88,7 +88,7 @@ try:
     sources_runtime = os.listdir("./")
     sources_runtime.sort()
     for file in sources_runtime:
-        hash_func = hashlib.new('sha256')
+        hash_func = hashlib.new('blake')
         #Ensure files inside .hash is not hashed
         if file != ".hash":
             try:

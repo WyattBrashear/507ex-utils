@@ -26,7 +26,7 @@ try:
         sources.sort()
         os.mkdir(".hash")
         for file in sources:
-            hash_func = hashlib.new('sha256')
+            hash_func = hashlib.new('blake2s')
             try:
                 with open(file, 'rb') as file:
                     while chunk := file.read(8192):
@@ -71,6 +71,8 @@ except Exception as e:
     exit(1)
 
 if args.url:
+    if not args.url.endswith(":507"):
+        args.url = f"{args.url}:507"
     print(f"Uploading {args.packname}.507ex to CAR repository located at: {args.url}...")
     executable = {'executable': open(f"{args.packname}.507ex", 'rb')}
     r = requests.post(f'{args.url}/push', files=executable)

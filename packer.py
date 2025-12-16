@@ -31,7 +31,7 @@ try:
                 with open(file, 'rb') as file:
                     while chunk := file.read(8192):
                         hash_func.update(chunk)
-                with open(f"./.hash/{str(file.name)}.hash", 'x') as f:
+                with open(f"./.hash/{str(file.name)}.blake2s", 'x') as f:
                     f.write(hash_func.hexdigest())
             except IsADirectoryError:
                 pass

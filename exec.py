@@ -6,7 +6,8 @@ import subprocess
 import zipfile
 import hashlib
 import requests
-import time
+import uuid
+
 #Parser Setup
 parser = argparse.ArgumentParser(
                     prog='507 Labs .507ex Execution Utility',
@@ -25,16 +26,23 @@ parser.add_argument('-d', '--destroy',
 parser.add_argument('-i', '--infinite',
                     action='store_true',
                     help="Infinite mode. Keeps the program running even in the event of an error/crash.")
+
 parser.add_argument('sourcefile')
 
 args = parser.parse_args()
 source = args.sourcefile
+exec_id = str(uuid.uuid4())
+
 #Let the user know that verbose mode is broken
 is_remote = False
 if args.verbose:
     choice = input("Note: Verbose mode currently breaks the execution part of this utility. Proceed? (y/n)")
     if choice.lower() != "n":
         exit(0)
+if args.destroy and args.keep_runtime:
+    print("Invalid combination of arguments: --destroy and --keep-runtime cannot be used together.")
+    exit(1)
+
 #Handle CAR sources
 if 'http://' in source or 'https://' in source:
     is_remote = True
@@ -52,28 +60,26 @@ if not source.endswith(".507ex"):
     print("Source file must be a .507ex file.")
     exit(1)
 #Remove .507ex-runtime if it exists
-if os.path.exists(".507ex-runtime"):
-    shutil.rmtree(".507ex-runtime")
-#And now create it
-os.mkdir(".507ex-runtime")
-#Print welcome message
+if not os.path.exists(".507ex-runtime"):
+    os.mkdir(".507ex-runtime")
+os.mkdir(f".507ex-runtime/{exec_id}")
 if args.verbose:
     print(f"507 Labs EX Runner v 1.0.0. Running: {source}.")
 #Attempt to copy the source file to the runtime directory
 try:
-    shutil.copy(source, "./.507ex-runtime/exec.zip")
+    shutil.copy(source, f"./.507ex-runtime/{exec_id}/exec.zip")
 except FileNotFoundError:
     #If it does not exist, let the user know and exit.
     print("Source executable not found. Are you sure it exists?")
     exit(1)
 if args.verbose:
-    print(f"Copied {source} to {os.getcwd()}/.507ex-runtime/exec.zip.")
+    print(f"Copied {source} to {os.getcwd()}/.507ex-runtime/{exec_id}/exec.zip.")
 #Unzip the source file
 try:
-    with zipfile.ZipFile('./.507ex-runtime/exec.zip', 'r') as zip_ref:
+    with zipfile.ZipFile(f'./.507ex-runtime/{exec_id}/exec.zip', 'r') as zip_ref:
         if args.verbose:
             print("Extracting Source File")
-        zip_ref.extractall(".507ex-runtime/exec")
+        zip_ref.extractall(f".507ex-runtime/{exec_id}/exec")
         if args.verbose:
             print("Source File Extracted.")
 except Exception as e:
@@ -84,7 +90,8 @@ try:
     file_hashes = []
     build_hashes = []
     #Change directory to .507ex-runtime/exec and generate hashes for files inside that directory.
-    os.chdir(".507ex-runtime/exec")
+    os.chdir(f".507ex-runtime/{exec_id}/exec")
+    
     sources_runtime = os.listdir("./")
     sources_runtime.sort()
     for file in sources_runtime:
@@ -141,6 +148,8 @@ try:
             subprocess.run(execfile, shell=True)
         #Once done, Exit the .507ex environment.
         os.chdir("../..")
+        os.chdir("../..")
+        os.chdir("../..")
 except KeyboardInterrupt:
     #Cleanly handle KeyboardInterrupts.
     print("\nExiting 507ex Environment")
@@ -154,12 +163,16 @@ except Exception as e:
     if args.verbose:
         print(e)
 if not args.keep_runtime:
-    #Do this if we are not keeping the runtime directory.
+    #Do this if we are not keeping the runtime directory.   j
     while ".507ex-runtime" in os.getcwd():
         #Ensure we are OUT of the .507ex-runtime directory. In the event that it is not.
         os.chdir("../")
     #Remove .507ex-runtime
-    shutil.rmtree("./.507ex-runtime")
+    
+    shutil.rmtree(f"./.507ex-runtime/{exec_id}")
+    #Clean up if nobody else is using the runtime.
+    if len(os.listdir(".507ex-runtime")) == 0:
+        shutil.rmtree(".507ex-runtime")
 if args.destroy or is_remote:
     #And optionally, destroy the source file.
     os.remove(source)

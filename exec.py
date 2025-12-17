@@ -49,16 +49,17 @@ if 'http://' in source or 'https://' in source:
     try:
         r = requests.get(source)
         r.raise_for_status()
-        with open('remote.507ex', 'wb') as f:
+        with open(f'{exec_id}.507ex', 'wb') as f:
             f.write(r.content)
     except:
         exit(1)
-    source = "remote.507ex"
+    source = f"{exec_id}.507ex"
 
 #Check if the sourcefile is a .507ex file
 if not source.endswith(".507ex"):
     print("Source file must be a .507ex file.")
     exit(1)
+
 #Remove .507ex-runtime if it exists
 if not os.path.exists(".507ex-runtime"):
     os.mkdir(".507ex-runtime")

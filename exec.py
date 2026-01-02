@@ -94,14 +94,13 @@ try:
             print("Source File Extracted.")
 except zipfile.BadZipFile:
     print("An error occurred while attempting to run the executable.")
-print("We got to try!")
 try:
     #Setup hashes lists
     file_hashes = []
     build_hashes = []
     #Change the directory to .507ex-runtime/exec and generate hashes for files inside that directory.
     os.chdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec")
-    print(os.getcwd())
+    
     sources_runtime = os.listdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec/")
     sources_runtime.sort()
     for file in sources_runtime:

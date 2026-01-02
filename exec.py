@@ -1,3 +1,6 @@
+"""
+507 Labs .507ex Execution Utility
+"""
 #!/usr/bin/env python3
 import argparse
 import os
@@ -5,14 +8,16 @@ import shutil
 import subprocess
 import zipfile
 import hashlib
-import requests
 import uuid
-
+import sys
+import requests
+from requests import RequestException
+path = os.getcwd()
 #Parser Setup
 parser = argparse.ArgumentParser(
                     prog='507 Labs .507ex Execution Utility',
                     description='Runs a .507ex executable.',
-                    epilog='[/|\]')
+                    epilog='507 Labs')
 #And Now the Args
 parser.add_argument('-v', '--verbose',
                     action='store_true',
@@ -25,75 +30,77 @@ parser.add_argument('-d', '--destroy',
                     help="Destroys the source file after execution. (Self destruct mode)")
 parser.add_argument('-i', '--infinite',
                     action='store_true',
-                    help="Infinite mode. Keeps the program running even in the event of an error/crash.")
+                    help="Infinite mode. Keeps the program running even in the event of an error.")
 
 parser.add_argument('sourcefile')
 
 args = parser.parse_args()
 source = args.sourcefile
-exec_id = str(uuid.uuid4())
+source = f"{path}/{source}"
+EXEC_ID = str(uuid.uuid4())
 
 #Let the user know that verbose mode is broken
 is_remote = False
 if args.verbose:
-    choice = input("Note: Verbose mode currently breaks the execution part of this utility. Proceed? (y/n)")
+    choice = input("Note: Verbose mode currently breaks utility. Proceed? (y/n)")
     if choice.lower() != "n":
-        exit(0)
+        sys.exit(0)
 if args.destroy and args.keep_runtime:
     print("Invalid combination of arguments: --destroy and --keep-runtime cannot be used together.")
-    exit(1)
+    sys.exit(1)
 
 #Handle CAR sources
 if 'http://' in source or 'https://' in source:
     is_remote = True
     try:
-        r = requests.get(source)
+        r = requests.get(source, timeout=10)
         r.raise_for_status()
-        with open(f'{exec_id}.507ex', 'wb') as f:
+        with open(f'{EXEC_ID}.507ex', 'wb') as f:
             f.write(r.content)
-    except:
-        exit(1)
-    source = f"{exec_id}.507ex"
+    except RequestException:
+        sys.exit(1)
+    source = f"{EXEC_ID}.507ex"
 
 #Check if the sourcefile is a .507ex file
 if not source.endswith(".507ex"):
     print("Source file must be a .507ex file.")
-    exit(1)
+    sys.exit(1)
 
 #Remove .507ex-runtime if it exists
 if not os.path.exists(".507ex-runtime"):
     os.mkdir(".507ex-runtime")
-os.mkdir(f".507ex-runtime/{exec_id}")
+print(path)
+os.mkdir(f"{path}/.507ex-runtime/{EXEC_ID}")
 if args.verbose:
     print(f"507 Labs EX Runner v 1.0.0. Running: {source}.")
 #Attempt to copy the source file to the runtime directory
 try:
-    shutil.copy(source, f"./.507ex-runtime/{exec_id}/exec.zip")
+    shutil.copy(source, f"{path}/.507ex-runtime/{EXEC_ID}/exec.zip")
 except FileNotFoundError:
-    #If it does not exist, let the user know and exit.
+    #If it does not exist, let the user know and sys.exit.
     print("Source executable not found. Are you sure it exists?")
-    exit(1)
+    sys.exit(1)
 if args.verbose:
-    print(f"Copied {source} to {os.getcwd()}/.507ex-runtime/{exec_id}/exec.zip.")
+    print(f"Copied {source} to {os.getcwd()}/.507ex-runtime/{EXEC_ID}/exec.zip.")
 #Unzip the source file
 try:
-    with zipfile.ZipFile(f'./.507ex-runtime/{exec_id}/exec.zip', 'r') as zip_ref:
+    with zipfile.ZipFile(f'{path}/.507ex-runtime/{EXEC_ID}/exec.zip', 'r') as zip_ref:
         if args.verbose:
             print("Extracting Source File")
-        zip_ref.extractall(f".507ex-runtime/{exec_id}/exec")
+        zip_ref.extractall(f"{path}/.507ex-runtime/{EXEC_ID}/exec")
         if args.verbose:
             print("Source File Extracted.")
-except Exception as e:
-    print(e)
+except zipfile.BadZipFile:
     print("An error occurred while attempting to run the executable.")
+print("We got to try!")
 try:
     #Setup hashes lists
     file_hashes = []
     build_hashes = []
-    #Change directory to .507ex-runtime/exec and generate hashes for files inside that directory.
-    os.chdir(f".507ex-runtime/{exec_id}/exec")
-    
-    sources_runtime = os.listdir("./")
+    #Change the directory to .507ex-runtime/exec and generate hashes for files inside that directory.
+    os.chdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec")
+    print(os.getcwd())
+    sources_runtime = os.listdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec/")
     sources_runtime.sort()
     for file in sources_runtime:
         hash_func = hashlib.new('blake2s')
@@ -110,24 +117,24 @@ try:
                 #If it is a directory, ignore it
                 pass
     #Change directory to .hash and get hashes from files inside that directory.
-    os.chdir("./.hash")
+    os.chdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec/.hash")
     sources = os.listdir("./")
     sources.sort()
     for file in sources:
         try:
             with open(file, 'r') as f:
-                #All hashes in the .hash directory are in plain text. So just read them as normal text.
+                #All hashes in the .hash directory are in plain text just read them as normal text.
                 build_hashes.append(f.read())
         except IsADirectoryError:
             pass
-    #Check if there are any file count discrepancies between the build file and the runtime environment.
+    #Check if there are any file count discrepancies between build and runtime hashes.
     if len(file_hashes) != len(build_hashes):
-        raise Exception("There are a different number of files in the build version of the package than the runtime version. Possible tampering detected.")
-    #Check if hashes  are equivalent.
+        raise Exception("File hash amount mismatch. Possible tampering detected.")
+    #Check if hashes are equivalent.
     for i in range(len(file_hashes)):
         if file_hashes[i] != build_hashes[i]:
-            raise Exception("Checksums generated at build are not equivalent to the checksums generated at runtime. Possible tampering detected.")
-    os.chdir("..")
+            raise Exception("File hash mismatch. Possible tampering detected.")
+    os.chdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec")
     #Open The runfile
     with open(f"./runfile", 'r') as runfile:
         if args.verbose:
@@ -141,39 +148,35 @@ try:
                 #Read runfile
                 execfile = f"{runfile.read()}"
                 #Execute!
-                subprocess.run(execfile, shell=True)
+                subprocess.run(execfile, shell=True, check=False)
                 print("Executable has crashed and/or run into an error. Restarting script...")
         else:
             #If infinite mode is not enabled, do the same except not in a while True: Loop.
             execfile = f"{runfile.read()}"
-            subprocess.run(execfile, shell=True)
-        #Once done, Exit the .507ex environment.
-        os.chdir("../..")
-        os.chdir("../..")
-        os.chdir("../..")
+            subprocess.run(execfile, shell=True, check=False)
+        #Once done, exit the .507ex environment.
+        os.chdir(path)
 except KeyboardInterrupt:
     #Cleanly handle KeyboardInterrupts.
     print("\nExiting 507ex Environment")
-    os.chdir("../..")
+    os.chdir(path)
 
 except Exception as e:
     #Cleanly handle exec errors.
-    print(f"An Error occurred while attempting to run {source}. Please contact the developer for assistance.")
+    print(f"An Error occurred while executing {source}. Please contact the developer for help.")
     print("\nExiting 507ex Environment")
-    os.chdir("../..")
-    if args.verbose:
-        print(e)
+    os.chdir(path)
+    print(e)
 if not args.keep_runtime:
     #Do this if we are not keeping the runtime directory.   j
     while ".507ex-runtime" in os.getcwd():
         #Ensure we are OUT of the .507ex-runtime directory. In the event that it is not.
         os.chdir("../")
-    #Remove .507ex-runtime
-    
-    shutil.rmtree(f"./.507ex-runtime/{exec_id}")
+
+    shutil.rmtree(f"{path}/.507ex-runtime/{EXEC_ID}")
     #Clean up if nobody else is using the runtime.
-    if len(os.listdir(".507ex-runtime")) == 0:
-        shutil.rmtree(".507ex-runtime")
+    if len(os.listdir(f"{path}/.507ex-runtime")) == 0:
+        shutil.rmtree(f"{path}/.507ex-runtime")
 if args.destroy or is_remote:
     #And optionally, destroy the source file.
     os.remove(source)

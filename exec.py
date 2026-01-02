@@ -69,7 +69,6 @@ if not source.endswith(".507ex"):
 #Remove .507ex-runtime if it exists
 if not os.path.exists(".507ex-runtime"):
     os.mkdir(".507ex-runtime")
-print(path)
 os.mkdir(f"{path}/.507ex-runtime/{EXEC_ID}")
 if args.verbose:
     print(f"507 Labs EX Runner v 1.0.0. Running: {source}.")
@@ -92,14 +91,12 @@ try:
             print("Source File Extracted.")
 except zipfile.BadZipFile:
     print("An error occurred while attempting to run the executable.")
-print("We got to try!")
 try:
     #Setup hashes lists
     file_hashes = []
     build_hashes = []
     #Change the directory to .507ex-runtime/exec and generate hashes for files inside that directory.
     os.chdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec")
-    print(os.getcwd())
     sources_runtime = os.listdir(f"{path}/.507ex-runtime/{EXEC_ID}/exec/")
     sources_runtime.sort()
     for file in sources_runtime:
@@ -166,7 +163,7 @@ except Exception as e:
     print(f"An Error occurred while executing {source}. Please contact the developer for help.")
     print("\nExiting 507ex Environment")
     os.chdir(path)
-    print(e)
+    #print(e)
 if not args.keep_runtime:
     #Do this if we are not keeping the runtime directory.   j
     while ".507ex-runtime" in os.getcwd():

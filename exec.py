@@ -48,11 +48,9 @@ def main():
     with open(source, 'rb') as f:
         binary_lines = [f.readline() for _ in range(6)]
         string_lines = [line.decode('utf-8').strip() for line in binary_lines]
-        print(string_lines)
         for metadata in string_lines:
             if metadata.endswith("|507ex-id"):
                 exec_id = metadata.split("|")[0]
-                print(exec_id)
             if metadata.endswith("|507ex-hashmode"):
                 hashmode = metadata.split("|")[0]
             if metadata.endswith("|507ex-hash"):

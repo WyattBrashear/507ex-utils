@@ -13,13 +13,15 @@ It's format is {source file name}.hash and is in the blake2s format.
 
 ## Metadata
 507ex metadata is stored at the top of the file and is handled like this:
-
+```507ex-metadata
 !507EX-METADATA
-HASH|507ex-hash
-UUID|507ex-id
+1b13618e5c5e4b77a40794cd6014b0e6d8a525fb6203bbeeeb60fe12b3bcbd61|507ex-hash
+e6830510-1d6f-420d-9ceb-664cafec2d54|507ex-id
 blake2s|507ex-hashmode
 #This File Was Created using 507ex-utils on github (https://github.com/WyattBrashear/507ex-utils). Check it out!
 !EXEC_CONTENTS
+```
+
 
 # CAR (Central App Repository)
 CAR is a server system that allows hosting of 507ex executables for easy download. it provides (Once uploaded) a url with the .507ex file on it.

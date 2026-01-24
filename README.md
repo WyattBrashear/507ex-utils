@@ -20,6 +20,7 @@ e6830510-1d6f-420d-9ceb-664cafec2d54|507ex-id
 blake2s|507ex-hashmode
 #This File Was Created using 507ex-utils on github (https://github.com/WyattBrashear/507ex-utils). Check it out!
 !EXEC_CONTENTS
+#Executable contents here
 ```
 
 
